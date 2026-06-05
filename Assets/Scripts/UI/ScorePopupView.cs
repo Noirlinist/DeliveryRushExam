@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -9,28 +10,44 @@ namespace DeliveryRushExam.UI
         [SerializeField] private float lifetime = 1.1f;
         [SerializeField] private float moveSpeed = 55f;
 
-        private float age;
+        private CanvasGroup _canvasGroup;
+        private float _age;
+
+        public event Action<ScorePopupView> Expired;
+
+        private void Awake()
+        {
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
 
         public void Setup(string message)
         {
-            age = 0f;
+            _age = 0f;
+
             messageText.text = message;
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 1f;
+            }
         }
 
         private void Update()
         {
-            age += Time.deltaTime;
-            transform.localPosition += Vector3.up * moveSpeed * Time.deltaTime;
+            _age += Time.deltaTime;
 
-            CanvasGroup canvasGroup = GetComponent<CanvasGroup>();
-            if (canvasGroup != null)
+            transform.localPosition +=
+                Vector3.up * (moveSpeed * Time.deltaTime);
+
+            if (_canvasGroup != null)
             {
-                canvasGroup.alpha = 1f - age / lifetime;
+                _canvasGroup.alpha =
+                    1f - _age / lifetime;
             }
 
-            if (age >= lifetime)
+            if (_age >= lifetime)
             {
-                Destroy(gameObject);
+                Expired?.Invoke(this);
             }
         }
     }

@@ -33,12 +33,15 @@ namespace DeliveryRushExam.UI
         [SerializeField] private GameObject resultsPanel;
         [SerializeField] private TMP_Text resultsText;
         
+        [Header("Popups")]
+        [SerializeField] private int popupPoolSize = 10;
+        
         // Components
         private Canvas _canvas;
         
         // Variables
         private int _lastDisplayedTime = -1;
-
+        private readonly Queue<ScorePopupView> _popupPool = new Queue<ScorePopupView>();
         private readonly List<OrderButtonView> orderViews = new List<OrderButtonView>();
 
         private void Awake()
@@ -56,6 +59,18 @@ namespace DeliveryRushExam.UI
             if (scoreManager == null)
             {
                 scoreManager = FindFirstObjectByType<ScoreManager>();
+            }
+            
+            for (int i = 0; i < popupPoolSize; i++)
+            {
+                ScorePopupView popup =
+                    Instantiate(scorePopupPrefab, popupsContainer);
+
+                popup.gameObject.SetActive(false);
+
+                popup.Expired += ReturnPopupToPool;
+
+                _popupPool.Enqueue(popup);
             }
         }
 
@@ -143,15 +158,43 @@ namespace DeliveryRushExam.UI
 
         private void ShowScorePopup(OrderData order)
         {
-            ScorePopupView popup = Instantiate(scorePopupPrefab, popupsContainer);
+            ScorePopupView popup;
+
+            if (_popupPool.Count > 0)
+            {
+                popup = _popupPool.Dequeue();
+            }
+            else
+            {
+                popup =
+                    Instantiate(scorePopupPrefab,
+                        popupsContainer);
+
+                popup.Expired += ReturnPopupToPool;
+            }
+
             popup.gameObject.SetActive(true);
-            popup.transform.localPosition = new Vector3(Random.Range(-90f, 90f), Random.Range(-25f, 35f), 0f);
-            popup.Setup("+" + order.rewardPoints + " points");
+
+            popup.transform.localPosition =
+                new Vector3(
+                    Random.Range(-90f, 90f),
+                    Random.Range(-25f, 35f),
+                    0f);
+
+            popup.Setup(
+                "+" + order.rewardPoints + " points");
         }
 
         private void UpdateScore(int a, int b, int c)
         {
             scoreText.text = $"Score: {scoreManager.Score}";
+        }
+        
+        private void ReturnPopupToPool(ScorePopupView popup)
+        {
+            popup.gameObject.SetActive(false);
+
+            _popupPool.Enqueue(popup);
         }
     }
 }
