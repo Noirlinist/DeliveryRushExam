@@ -36,8 +36,6 @@ namespace DeliveryRushExam.UI
         [Header("Popups")]
         [SerializeField] private int popupPoolSize = 10;
         
-        // Components
-        private Canvas _canvas;
         
         // Variables
         private int _lastDisplayedTime = -1;

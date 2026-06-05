@@ -15,6 +15,7 @@ namespace DeliveryRushExam.UI
 
         private OrderData orderData;
         private Action<string> onCompleteClicked;
+        private int _lastDisplayedTime = -1;
 
         public void Setup(OrderData order, Action<string> completeCallback)
         {
@@ -29,6 +30,9 @@ namespace DeliveryRushExam.UI
             completeButton.onClick.RemoveAllListeners();
             completeButton.onClick.AddListener(HandleClick);
 
+            titleText.text = $"Deliver to {orderData.customerName}";
+            rewardText.text = $"+{orderData.rewardPoints} pts / +{orderData.rewardCoins} coins";
+
             Refresh();
         }
 
@@ -39,10 +43,17 @@ namespace DeliveryRushExam.UI
                 return;
             }
 
-            // Texto directo para facilitar el seguimiento durante el examen.
-            titleText.text = "Deliver to " + orderData.customerName;
-            rewardText.text = "+" + orderData.rewardPoints + " pts / +" + orderData.rewardCoins + " coins";
-            timerText.text = "Time " + Mathf.CeilToInt(orderData.remainingTime);
+            int currentTime =
+                Mathf.CeilToInt(orderData.remainingTime);
+
+            if (currentTime == _lastDisplayedTime)
+            {
+                return;
+            }
+
+            _lastDisplayedTime = currentTime;
+
+            timerText.text = $"Time {currentTime}";
         }
 
         private void HandleClick()
