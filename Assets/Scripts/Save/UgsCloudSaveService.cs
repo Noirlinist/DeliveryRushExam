@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DeliveryRushExam.Data;
+using Unity.Services.CloudSave;
 using UnityEngine;
 
 namespace DeliveryRushExam.Save
@@ -8,17 +10,45 @@ namespace DeliveryRushExam.Save
     {
         private const string ProgressKey = "delivery_rush_progress";
 
-        public async Task<PlayerProgressData> LoadAsync()
-        {
-            Debug.LogWarning("UGS Cloud Save is not enabled. Add UGS packages and implement it.");
-            await Task.Yield();
-            return new PlayerProgressData();
-        }
-
         public async Task SaveAsync(PlayerProgressData progressData)
         {
-            Debug.LogWarning("UGS Cloud Save is not enabled. Add UGS packages and implement it.");
-            await Task.Yield();
+            Debug.Log("Saving to Cloud");
+            Debug.Log(JsonUtility.ToJson(progressData));
+            
+            progressData.TouchSaveDate();
+
+            string json =
+                JsonUtility.ToJson(progressData);
+
+            var data =
+                new Dictionary<string, object>
+                {
+                    { ProgressKey, json }
+                };
+
+            await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+        }
+
+        public async Task<PlayerProgressData> LoadAsync()
+        {
+            Debug.Log("Loading from Cloud");
+            var result =
+                await CloudSaveService.Instance.Data.Player.LoadAsync(
+                    new HashSet<string>
+                    {
+                        ProgressKey
+                    });
+
+            if (!result.TryGetValue(ProgressKey, out var item))
+            {
+                return new PlayerProgressData();
+            }
+
+            string json =
+                item.Value.GetAsString();
+
+            return JsonUtility.FromJson<PlayerProgressData>(json)
+                   ?? new PlayerProgressData();
         }
     }
 }

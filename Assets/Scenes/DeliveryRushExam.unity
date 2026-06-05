@@ -831,6 +831,7 @@ MonoBehaviour:
   gameplayPanel: {fileID: 727941080}
   resultsPanel: {fileID: 984154977}
   resultsText: {fileID: 477207602}
+  popupPoolSize: 10
 --- !u!114 &758901907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1799,6 +1800,51 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1417660475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1417660476}
+  - component: {fileID: 1417660477}
+  m_Layer: 0
+  m_Name: SaveServicesLocator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1417660476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417660475}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.34145, y: -0.38701, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1417660477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417660475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ee4f0dd1f7b4e85b2d7270d9924248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeliveryRushExam.Save.SaveServicesInstaller
+  saveMode: 0
 --- !u!1 &1531938924
 GameObject:
   m_ObjectHideFlags: 0
@@ -2469,4 +2515,5 @@ SceneRoots:
   - {fileID: 1596308709}
   - {fileID: 610417428}
   - {fileID: 758901912}
+  - {fileID: 1417660476}
   - {fileID: 1531938928}
