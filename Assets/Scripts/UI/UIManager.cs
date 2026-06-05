@@ -32,6 +32,12 @@ namespace DeliveryRushExam.UI
         [SerializeField] private GameObject gameplayPanel;
         [SerializeField] private GameObject resultsPanel;
         [SerializeField] private TMP_Text resultsText;
+        
+        // Components
+        private Canvas _canvas;
+        
+        // Variables
+        private int _lastDisplayedTime = -1;
 
         private readonly List<OrderButtonView> orderViews = new List<OrderButtonView>();
 
@@ -57,19 +63,14 @@ namespace DeliveryRushExam.UI
         {
             orderManager.OrdersChanged += RefreshOrderList;
             scoreManager.OrderScored += ShowScorePopup;
+            scoreManager.ScoreChanged += UpdateScore;
         }
 
         private void OnDisable()
         {
-            if (orderManager != null)
-            {
-                orderManager.OrdersChanged -= RefreshOrderList;
-            }
-
-            if (scoreManager != null)
-            {
-                scoreManager.OrderScored -= ShowScorePopup;
-            }
+            orderManager.OrdersChanged -= RefreshOrderList;
+            scoreManager.OrderScored -= ShowScorePopup;
+            scoreManager.ScoreChanged -= UpdateScore;
         }
 
         private void Update()
@@ -78,21 +79,23 @@ namespace DeliveryRushExam.UI
             {
                 return;
             }
-
-            scoreText.text = "Score: " + scoreManager.Score;
+            
             coinsText.text = "Coins: " + scoreManager.Coins;
-            timerText.text = "Time: " + Mathf.CeilToInt(gameManager.RemainingTime);
             ordersCountText.text = "Orders: " + orderManager.ActiveOrders.Count;
+            
+            int currentTime =
+                Mathf.CeilToInt(gameManager.RemainingTime);
+
+            if(currentTime != _lastDisplayedTime)
+            {
+                _lastDisplayedTime = currentTime;
+
+                timerText.text = $"Time: {currentTime}";
+            }
 
             for (int i = 0; i < orderViews.Count; i++)
             {
                 orderViews[i].Refresh();
-            }
-
-            Canvas canvas = GetComponentInParent<Canvas>();
-            if (canvas != null && ordersContainer != null)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(ordersContainer);
             }
         }
 
@@ -119,12 +122,6 @@ namespace DeliveryRushExam.UI
 
         private void RefreshOrderList()
         {
-            OrderManager runtimeOrderManager = FindFirstObjectByType<OrderManager>();
-            if (runtimeOrderManager != null)
-            {
-                orderManager = runtimeOrderManager;
-            }
-
             for (int i = 0; i < orderViews.Count; i++)
             {
                 Destroy(orderViews[i].gameObject);
@@ -140,6 +137,8 @@ namespace DeliveryRushExam.UI
                 view.Setup(orders[i], orderManager.CompleteOrder);
                 orderViews.Add(view);
             }
+            
+            LayoutRebuilder.ForceRebuildLayoutImmediate(ordersContainer);
         }
 
         private void ShowScorePopup(OrderData order)
@@ -148,6 +147,11 @@ namespace DeliveryRushExam.UI
             popup.gameObject.SetActive(true);
             popup.transform.localPosition = new Vector3(Random.Range(-90f, 90f), Random.Range(-25f, 35f), 0f);
             popup.Setup("+" + order.rewardPoints + " points");
+        }
+
+        private void UpdateScore(int a, int b, int c)
+        {
+            scoreText.text = $"Score: {scoreManager.Score}";
         }
     }
 }
