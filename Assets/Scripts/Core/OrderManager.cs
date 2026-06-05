@@ -50,21 +50,22 @@ namespace DeliveryRushExam.Core
                 TrySpawnOrder();
             }
 
+            bool ordersRemoved = false;
+
             for (int i = activeOrders.Count - 1; i >= 0; i--)
             {
                 activeOrders[i].remainingTime -= Time.deltaTime;
-            }
-            
-            int expiredCount = activeOrders.Where(order => order.remainingTime <= 0f).Count();
-            if (expiredCount > 0)
-            {
-                activeOrders.RemoveAll(order => order.remainingTime <= 0f);
-                OrdersChanged?.Invoke();
+
+                if (activeOrders[i].remainingTime <= 0f)
+                {
+                    activeOrders.RemoveAt(i);
+                    ordersRemoved = true;
+                }
             }
 
-            if (verboseLogs)
+            if (ordersRemoved)
             {
-                Debug.Log("Active orders: " + activeOrders.Count + " expired: " + expiredCount);
+                OrdersChanged?.Invoke();
             }
         }
 

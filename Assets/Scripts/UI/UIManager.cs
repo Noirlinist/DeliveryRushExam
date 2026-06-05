@@ -39,6 +39,8 @@ namespace DeliveryRushExam.UI
         
         // Variables
         private int _lastDisplayedTime = -1;
+        private int _lastCoins = -1;
+        private int _lastOrdersCount = -1;
         private readonly Queue<ScorePopupView> _popupPool = new Queue<ScorePopupView>();
         private readonly List<OrderButtonView> orderViews = new List<OrderButtonView>();
 
@@ -93,8 +95,20 @@ namespace DeliveryRushExam.UI
                 return;
             }
             
-            coinsText.text = $"Coins: {scoreManager.Coins}";
-            ordersCountText.text = $"Orders: {orderManager.ActiveOrders.Count}";
+            if(scoreManager.Coins != _lastCoins)
+            {
+                _lastCoins = scoreManager.Coins;
+                coinsText.text = $"Coins: {_lastCoins}";
+            }
+            
+            int orderCount = orderManager.ActiveOrders.Count;
+
+            if(orderCount != _lastOrdersCount)
+            {
+                _lastOrdersCount = orderCount;
+                ordersCountText.text =
+                    $"Orders: {orderCount}";
+            }
             
             int currentTime =
                 Mathf.CeilToInt(gameManager.RemainingTime);
