@@ -95,8 +95,8 @@ namespace DeliveryRushExam.UI
                 return;
             }
             
-            coinsText.text = "Coins: " + scoreManager.Coins;
-            ordersCountText.text = "Orders: " + orderManager.ActiveOrders.Count;
+            coinsText.text = $"Coins: {scoreManager.Coins}";
+            ordersCountText.text = $"Orders: {orderManager.ActiveOrders.Count}";
             
             int currentTime =
                 Mathf.CeilToInt(gameManager.RemainingTime);
@@ -181,8 +181,7 @@ namespace DeliveryRushExam.UI
                     Random.Range(-25f, 35f),
                     0f);
 
-            popup.Setup(
-                "+" + order.rewardPoints + " points");
+            popup.Setup($"+ {order.rewardPoints} points");
         }
 
         private void UpdateScore(int a, int b, int c)
